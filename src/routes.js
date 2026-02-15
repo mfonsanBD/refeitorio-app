@@ -4,16 +4,16 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 const AppStack = createStackNavigator();
 
-import Home from './pages/Home';
+import Home from './screens/Home';
 
-import AddCategory from './pages/AddCategory';
-import ListCategory from './pages/ListCategory';
+import AddCategory from './screens/AddCategory';
+import ListCategory from './screens/ListCategory';
 
-import AddDish from './pages/AddDish';
-import ListDish from './pages/ListDish';
+import AddDish from './screens/AddDish';
+import ListDish from './screens/ListDish';
 
-import AddMenu from './pages/AddMenu';
-import ViewMenus from './pages/ViewMenus';
+import AddMenu from './screens/AddMenu';
+import ViewMenus from './screens/ViewMenus';
 
 export default function Routes(){
     return(

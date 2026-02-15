@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import { store, persistor } from './src/store';
 import Routes from './src/routes';
 
-import AppLoading from 'expo-app-loading';
+import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font'; 
+
+SplashScreen.preventAutoHideAsync();
 
 const fetchFont = () => {
     return Font.loadAsync({
@@ -18,17 +20,25 @@ const fetchFont = () => {
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
+  useEffect(() => {
+    fetchFont()
+      .then(() => setFontsLoaded(true))
+      .catch(() => console.log("ERRO"));
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   if(!fontsLoaded){
-      return <AppLoading
-          startAsync={fetchFont}
-          onFinish={()=>setFontsLoaded(true)}
-          onError={()=>console.log("ERRO")}
-      />
+      return null;
   }
 
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate loading={null} persistor={persistor} onBeforeLift={onLayoutRootView}>
         <Routes/>
       </PersistGate>
     </Provider>
