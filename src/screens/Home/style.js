@@ -1,27 +1,48 @@
-import styled from "styled-components";
+import { StyleSheet } from 'react-native';
 
-export default {
-    Container: styled.SafeAreaView`
-        flex: 1;
-        background-color:#FF9900;
-        justify-content:center;
-        align-items:center;
-        padding: 25px;
-    `,
-    Card: styled.TouchableHighlight`
-        background-color:#FFFFFF;
-        padding:20px;
-        justify-content:space-between;
-        align-items:center;
-        flex-direction:row;
-        width:100%;
-        border-radius:10px;
-        margin-bottom:10px;
-    `,
-    Description: styled.View``,
-    Button: styled.View`
-        background-color:#FF9900;
-        padding:12px;
-        border-radius:5px;
-    `,
-}
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#FF9900',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 25,
+    },
+    card: {
+        backgroundColor: '#FFFFFF',
+        padding: 20,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
+        width: '100%',
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    button: {
+        backgroundColor: '#FF9900',
+        padding: 12,
+        borderRadius: 5,
+    },
+    title: {
+        fontSize: 36,
+        color: '#FFFFFF',
+        marginBottom: 30,
+        textTransform: 'uppercase',
+        fontFamily: 'PoppinsBold',
+    },
+    descriptionTop: {
+        fontSize: 18,
+        color: '#C4C4C4',
+        textTransform: 'uppercase',
+        fontFamily: 'PoppinsRegular',
+    },
+    descriptionBottom: {
+        fontSize: 18,
+        color: '#FF9900',
+        textTransform: 'uppercase',
+        fontFamily: 'PoppinsBold',
+        marginTop: -10,
+    },
+});
+
+export default styles;

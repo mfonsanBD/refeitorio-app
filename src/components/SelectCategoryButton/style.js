@@ -1,48 +1,52 @@
-import styled from 'styled-components';
+import { StyleSheet } from 'react-native';
 
-export default {
-  SelectContainer: styled.TouchableOpacity`
-    width: 100%;
-    background-color: #FFFFFF;
-    border:1px solid #DDDDDD;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 5px;
-    padding: 10px 16px;
-  `,
-  ModalHeader: styled.View`
-    padding: 20px;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  `,
-  ModalHeaderTitle: styled.Text`
-    color:#333333;
-    font-family: PoppinsBold;
-    font-size: 17px;
-  `,
-  IconBackground: styled.TouchableOpacity`
-    width: 130px;
-    height: 40px;
-    border-radius: 20px;
-    background-color: #FF9900;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-  `,
-  Cancel: styled.Text`
-    color: #FFFFFF;
-    font-family: PoppinsMedium;
-    margin-left: 5px;
-  `,
-  Lista: styled.FlatList``,
-  ClickCategory: styled.TouchableOpacity`
-    padding: 10px 20px;
-  `,
-  ModalCategory: styled.Text`
-    font-size: 16px;
-    font-family: PoppinsRegular;
-    color: #495057;
-  `,
-}
+const styles = StyleSheet.create({
+    selectContainer: {
+        width: '100%',
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#DDDDDD',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+    },
+    modalHeader: {
+        padding: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    modalHeaderTitle: {
+        color: '#333333',
+        fontFamily: 'PoppinsBold',
+        fontSize: 17,
+    },
+    iconBackground: {
+        width: 130,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#FF9900',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    cancel: {
+        color: '#FFFFFF',
+        fontFamily: 'PoppinsMedium',
+        marginLeft: 5,
+    },
+    clickCategory: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+    },
+    modalCategory: {
+        fontSize: 16,
+        fontFamily: 'PoppinsRegular',
+        color: '#495057',
+    },
+});
+
+export default styles;

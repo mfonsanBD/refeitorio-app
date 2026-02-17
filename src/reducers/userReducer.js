@@ -3,20 +3,19 @@ const initialState = {
     menu: '', //id do cardápio do dia
 };
 
-export default (state = initialState, action) => {
+export default function userReducer(state = initialState, action) {
     switch(action.type){
         case 'SET_DISHES':
             return {
                 ...state, 
                 dishes: action.payload.dishes
-            }
-        break;
+            };
         case 'SET_MENU':
-            return{
+            return {
                 ...state,
                 menu: action.payload.menu
-            }
-        break;
+            };
+        default:
+            return state;
     }
-    return state;
 }

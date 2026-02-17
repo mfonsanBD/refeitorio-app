@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Text, StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../service/api';
-import D from './style';
+import styles, { getModalColors } from './style';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SelectCategoryButton from '../../components/SelectCategoryButton';
 
-export default function AddDish(){
+export default function AddDish() {
     const navigation = useNavigation();
 
     const [categoryList, setCategoryList] = useState([]);
@@ -14,11 +15,11 @@ export default function AddDish(){
     const getCategories = async () => {
         const request = await api.getCategoriesList();
         setCategoryList(request);
-    }
+    };
 
-    useEffect(()=>{
+    useEffect(() => {
         getCategories();
-    },[]);
+    }, []);
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showWarningModal, setShowWarningModal] = useState(false);
@@ -55,144 +56,110 @@ export default function AddDish(){
     const [dishCategory, setDishCategory] = useState('');
 
     const addDish = async () => {
-        if(dishName === ''){
+        if (dishName === '') {
             setWarningMessage("O campo NOME DO PRATO é obrigatório!");
             setShowWarningModal(true);
         }
-        else if(dishCategory === ''){
+        else if (dishCategory === '') {
             setWarningMessage("O campo CATEGORIA é obrigatório!");
             setShowWarningModal(true);
         }
-        else{
+        else {
             const request = await api.insertDish(dishName, dishCategory);
 
-            if(!request.error){
+            if (!request.error) {
                 setShowSuccessModal(true);
                 setDishName('');
                 setDishCategory('');
             }
-            else{
+            else {
                 setWarningMessage(request.error);
                 setShowWarningModal(true);
             }
         }
-    }
+    };
 
-    return(
-        <D.Container>
-            <D.Header>
-                <MaterialCommunityIcons name="arrow-left" size={24} color="#333333" onPress={()=>navigation.goBack()}/>
-                <Text style={style({}).headerTitle}>Adicionar Prato</Text>
-            </D.Header>
-            <D.Label>Nome do Prato</D.Label>
-            <D.Input
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <MaterialCommunityIcons name="arrow-left" size={24} color="#333333" onPress={() => navigation.goBack()} />
+                <Text style={styles.headerTitle}>Adicionar Prato</Text>
+            </View>
+            <Text style={styles.label}>Nome do Prato</Text>
+            <TextInput
+                style={styles.input}
                 placeholder="Ex.: Bisteca Grelhada"
                 placeholderTextColor="#C4C4C4"
                 value={dishName}
-                onChangeText={t=>setDishName(t)}
+                onChangeText={t => setDishName(t)}
             />
-            <D.Label>Categoria</D.Label>
+            <Text style={styles.label}>Categoria</Text>
             <SelectCategoryButton
                 opcoes={categoryList}
-                onChangeSelect={(id)=>setDishCategory(id)}
+                onChangeSelect={(id) => setDishCategory(id)}
                 text="Escolha uma opção..."
                 buttonSpace={100}
             />
 
-            <D.SaveButton onPress={addDish}>
-                <Text style={style({}).saveButtonText}>Adicionar Prato</Text>
-            </D.SaveButton>
+            <TouchableOpacity style={styles.saveButton} onPress={addDish}>
+                <Text style={styles.saveButtonText}>Adicionar Prato</Text>
+            </TouchableOpacity>
 
-            {modaltypes.map((item, index)=>(
+            {modaltypes.map((item, index) => (
                 <Modal key={index} animationType="slide" transparent={true} statusBarTranslucent={true} visible={item.show}>
-                    <D.ModalContainer>
-                        <Text style={style({}).modalTitle}>{item.title}!</Text>
-                        <D.CircleOpacity modalType={item.type}>
-                            <D.Circle modalType={item.type}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>{item.title}!</Text>
+                        <View style={[styles.circleOpacity, { backgroundColor: getModalColors(item.type).bgOpacity }]}>
+                            <View style={[styles.circle, { backgroundColor: getModalColors(item.type).bg }]}>
                                 <MaterialCommunityIcons name={item.iconName} size={60} color={item.type === 'warning' ? "#333333" : "#FFFFFF"} />
-                            </D.Circle>
-                        </D.CircleOpacity>
+                            </View>
+                        </View>
 
-                        <Text style={style({modalType: item.type}).message}>{item.message}</Text>
-                        
+                        <Text style={[styles.message, { width: item.type === 'success' ? '50%' : '100%' }]}>{item.message}</Text>
+
                         {item.type === 'success' &&
-                            <D.TwoButton>
-                                <D.BackToHome
-                                    modalType={item.type}
-                                    onPress={()=>setShowSuccessModal(false)}
+                            <View style={styles.twoButton}>
+                                <TouchableOpacity
+                                    style={[styles.backToHomeHalf, { backgroundColor: getModalColors(item.type).bg }]}
+                                    onPress={() => setShowSuccessModal(false)}
                                 >
-                                    <Text style={style({modalType: item.type}).backToHomeText}>
+                                    <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
                                         Adicionar Outro Prato
                                     </Text>
-                                </D.BackToHome>
-                                <D.BackToHome
-                                    modalType={item.type}
-                                    style={{backgroundColor:'#AAAAAA'}}
-                                    onPress={()=>navigation.navigate('Home')}
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.backToHomeHalf, { backgroundColor: '#AAAAAA' }]}
+                                    onPress={() => navigation.navigate('Home')}
                                 >
-                                    <Text style={style({modalType: item.type}).backToHomeText}>
+                                    <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
                                         Voltar para o Inicio
                                     </Text>
-                                </D.BackToHome>
-                            </D.TwoButton>
+                                </TouchableOpacity>
+                            </View>
                         }
                         {item.type === 'warning' &&
-                            <D.BackToHome 
-                                modalType={item.type}
-                                onPress={()=>setShowWarningModal(false)}
+                            <TouchableOpacity
+                                style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
+                                onPress={() => setShowWarningModal(false)}
                             >
-                                <Text style={style({modalType: item.type}).backToHomeText}>
+                                <Text style={[styles.backToHomeText, { color: '#333333' }]}>
                                     Corrigir
                                 </Text>
-                            </D.BackToHome>
+                            </TouchableOpacity>
                         }
                         {item.type === 'danger' &&
-                            <D.BackToHome 
-                                modalType={item.type} 
-                                onPress={()=>navigation.navigate('Home')}
+                            <TouchableOpacity
+                                style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
+                                onPress={() => navigation.navigate('Home')}
                             >
-                                <Text
-                                    style={style({modalType: item.type}).backToHomeText}
-                                >
+                                <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
                                     Voltar para a Tela Inicial
                                 </Text>
-                            </D.BackToHome>
+                            </TouchableOpacity>
                         }
-                    </D.ModalContainer>
+                    </View>
                 </Modal>
             ))}
-        </D.Container>
-    )
+        </SafeAreaView>
+    );
 }
-
-const style = (props) => StyleSheet.create({
-    headerTitle: {
-        flex: 1,
-        textAlign:'center',
-        fontSize:18,
-        fontFamily:'PoppinsBold',
-        color: '#333333'
-    },
-    saveButtonText: {
-        fontFamily:'PoppinsBold',
-        color: '#FFFFFF',
-        fontSize: 16
-    },
-    modalTitle: {
-        fontFamily:'PoppinsBold',
-        fontSize: 28,
-        color: '#495057'
-    },
-    message: {
-        fontFamily:'PoppinsMedium',
-        width: props.modalType === 'success' ? '50%' : '100%',
-        textAlign:'center',
-        fontSize:18,
-        color: '#AAAAAA',
-    },
-    backToHomeText: {
-        color: props.modalType === 'warning' ? '#333333' : '#FFFFFF',
-        fontFamily:'PoppinsBold',
-        textAlign:'center',
-    }
-})

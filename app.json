@@ -10,9 +10,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#FF9900"
     },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
     "assetBundlePatterns": [
       "**/*"
     ],

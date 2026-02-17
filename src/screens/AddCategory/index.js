@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Modal, Text, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../service/api';
-import D from './style';
+import styles, { getModalColors } from './style';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function AddCategory(){
+export default function AddCategory() {
     const navigation = useNavigation();
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -42,122 +43,87 @@ export default function AddCategory(){
     const [categoryName, setCategoryName] = useState('');
 
     const addCategory = async () => {
-        if(categoryName === ''){
+        if (categoryName === '') {
             setWarningMessage("O campo NOME DA CATEGORIA é obrigatório!");
             setShowWarningModal(true);
         }
-        else{
+        else {
             const request = await api.insertCategory(categoryName);
 
-            if(!request.error){
+            if (!request.error) {
                 setShowSuccessModal(true);
                 setCategoryName('');
             }
-            else{
+            else {
                 setWarningMessage(request.error);
                 setShowWarningModal(true);
             }
         }
-    }
+    };
 
-    return(
-        <D.Container>
-            <D.Header>
-                <MaterialCommunityIcons name="arrow-left" size={24} color="#333333" onPress={()=>navigation.goBack()}/>
-                <Text style={style({}).headerTitle}>Adicionar Categoria</Text>
-            </D.Header>
-            <D.Label>Nome da Categoria</D.Label>
-            <D.Input
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <MaterialCommunityIcons name="arrow-left" size={24} color="#333333" onPress={() => navigation.goBack()} />
+                <Text style={styles.headerTitle}>Adicionar Categoria</Text>
+            </View>
+            <Text style={styles.label}>Nome da Categoria</Text>
+            <TextInput
+                style={styles.input}
                 placeholder="Ex.: Salada, Acompanhamentos, Proteína, etc..."
                 placeholderTextColor="#C4C4C4"
                 value={categoryName}
-                onChangeText={t=>setCategoryName(t)}
+                onChangeText={t => setCategoryName(t)}
             />
-            <D.SaveButton onPress={addCategory}>
-                <Text style={style({}).saveButtonText}>Adicionar Categoria</Text>
-            </D.SaveButton>
+            <TouchableOpacity style={styles.saveButton} onPress={addCategory}>
+                <Text style={styles.saveButtonText}>Adicionar Categoria</Text>
+            </TouchableOpacity>
 
-            {modaltypes.map((item, index)=>(
+            {modaltypes.map((item, index) => (
                 <Modal key={index} animationType="slide" transparent={true} statusBarTranslucent={true} visible={item.show}>
-                    <D.ModalContainer>
-                        <Text style={style({}).modalTitle}>{item.title}!</Text>
-                        <D.CircleOpacity modalType={item.type}>
-                            <D.Circle modalType={item.type}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>{item.title}!</Text>
+                        <View style={[styles.circleOpacity, { backgroundColor: getModalColors(item.type).bgOpacity }]}>
+                            <View style={[styles.circle, { backgroundColor: getModalColors(item.type).bg }]}>
                                 <MaterialCommunityIcons name={item.iconName} size={60} color={item.type === 'warning' ? "#333333" : "#FFFFFF"} />
-                            </D.Circle>
-                        </D.CircleOpacity>
+                            </View>
+                        </View>
 
-                        <Text style={style({modalType: item.type}).message}>{item.message}</Text>
-                        
+                        <Text style={[styles.message, { width: item.type === 'success' ? '70%' : '100%' }]}>{item.message}</Text>
+
                         {item.type === 'success' &&
-                            <D.BackToHome 
-                                modalType={item.type}
-                                onPress={()=>navigation.navigate('Home')}
+                            <TouchableOpacity
+                                style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
+                                onPress={() => navigation.navigate('Home')}
                             >
-                                <Text
-                                    style={style({modalType: item.type}).backToHomeText}
-                                >
+                                <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
                                     Voltar para a Tela Inicial
                                 </Text>
-                            </D.BackToHome>
+                            </TouchableOpacity>
                         }
                         {item.type === 'warning' &&
-                            <D.BackToHome 
-                                modalType={item.type}
-                                onPress={()=>setShowWarningModal(false)}
+                            <TouchableOpacity
+                                style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
+                                onPress={() => setShowWarningModal(false)}
                             >
-                                <Text style={style({modalType: item.type}).backToHomeText}>
+                                <Text style={[styles.backToHomeText, { color: '#333333' }]}>
                                     Corrigir
                                 </Text>
-                            </D.BackToHome>
+                            </TouchableOpacity>
                         }
                         {item.type === 'danger' &&
-                            <D.BackToHome 
-                                modalType={item.type} 
-                                onPress={()=>navigation.navigate('Home')}
+                            <TouchableOpacity
+                                style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
+                                onPress={() => navigation.navigate('Home')}
                             >
-                                <Text
-                                    style={style({modalType: item.type}).backToHomeText}
-                                >
+                                <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
                                     Voltar para a Tela Inicial
                                 </Text>
-                            </D.BackToHome>
+                            </TouchableOpacity>
                         }
-                    </D.ModalContainer>
+                    </View>
                 </Modal>
             ))}
-        </D.Container>
-    )
+        </SafeAreaView>
+    );
 }
-
-const style = (props) => StyleSheet.create({
-    headerTitle: {
-        flex: 1,
-        textAlign:'center',
-        fontSize:18,
-        fontFamily:'PoppinsBold',
-        color: '#333333'
-    },
-    saveButtonText: {
-        fontFamily:'PoppinsBold',
-        color: '#FFFFFF',
-        fontSize: 16
-    },
-    modalTitle: {
-        fontFamily:'PoppinsBold',
-        fontSize: 28,
-        color: '#495057'
-    },
-    message: {
-        fontFamily:'PoppinsMedium',
-        width: props.modalType === 'success' ? '70%' : '100%',
-        textAlign:'center',
-        fontSize:18,
-        color: '#AAAAAA',
-    },
-    backToHomeText: {
-        color: props.modalType === 'warning' ? '#333333' : '#FFFFFF',
-        fontFamily:'PoppinsBold',
-        textAlign:'center',
-    }
-})
