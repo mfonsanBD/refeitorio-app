@@ -35,6 +35,8 @@ export default function ListDish() {
         getDishes();
     };
 
+    const Separator = () => <View style={{ height: 16 }} />;
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -64,6 +66,7 @@ export default function ListDish() {
                 showsVerticalScrollIndicator={false}
                 refreshing={loading}
                 onRefresh={getDishes}
+                ItemSeparatorComponent={Separator}
               />
             }
         </SafeAreaView>

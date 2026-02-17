@@ -1,4 +1,3 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import styles, { getModalColors } from "./style";
 import { useState } from "react";
 import { Modal, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from "react-native";
@@ -110,7 +109,7 @@ const DishItem = ({ dish, categoryList, refresh }) => {
         }
     };
   return (
-    <SafeAreaView>
+    <View>
       <TouchableHighlight style={styles.category} onPress={() => options(dish.nome, dish.id, dish.categoria.nome, dish.categoria.id)} underlayColor="#ededed">
         <View style={{flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', flex: 1, gap: 12}}>
           <View style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -283,7 +282,7 @@ const DishItem = ({ dish, categoryList, refresh }) => {
               </View>
           </Modal>
       ))}
-    </SafeAreaView>
+    </View>
   )
 }
 
