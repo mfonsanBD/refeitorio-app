@@ -70,10 +70,10 @@ export default {
     return resposta;
   },
 
-  insertDish: async (nome, categoria_id) => {
+  insertDish: async (nome, categoria_id, vegano, lactose, gluten) => {
     let resposta;
 
-    await api.post('prato', {nome, categoria_id}, {
+    await api.post('prato', {nome, categoria_id, vegano, lactose, gluten}, {
       "headers": {
         'Content-Type':'application/json'
       }
@@ -86,12 +86,15 @@ export default {
     return resposta;
   },
 
-  updateDish: async (nome, categoria_id, id) => {
+  updateDish: async (nome, categoria_id, vegano, lactose, gluten, id) => {
     let resposta;
 
     await api.put('atualizaprato', {
       nome,
       categoria_id,
+      vegano,
+      lactose,
+      gluten,
       id
     }, {
       "headers": {

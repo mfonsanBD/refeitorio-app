@@ -1,6 +1,6 @@
 import styles, { getModalColors } from "./style";
 import { useState } from "react";
-import { Modal, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { Modal, Switch, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SelectCategoryButton from "../SelectCategoryButton";
 import api from "../../service/api";
@@ -47,11 +47,17 @@ const DishItem = ({ dish, categoryList, refresh }) => {
 
     const [newDishName, setNewDishName] = useState('');
     const [newDishCategory, setNewDishCategory] = useState('');
+    const [newIsVegan, setNewIsVegan] = useState(false);
+    const [newHasLactose, setNewHasLactose] = useState(false);
+    const [newHasGluten, setNewHasGluten] = useState(false);
 
-    const options = (name, id, categoryName, categoryId) => {
+    const options = (name, id, categoryName, categoryId, vegano, lactose, gluten) => {
         setModalDish({ name, id, categoryName, categoryId });
         setNewDishName(name);
         setNewDishCategory(categoryId);
+        setNewIsVegan(vegano || false);
+        setNewHasLactose(lactose || false);
+        setNewHasGluten(gluten || false);
         setOptionsModal(true);
     };
 
@@ -84,7 +90,7 @@ const DishItem = ({ dish, categoryList, refresh }) => {
             setShowWarningModal(true);
         }
         else {            
-            const resultado = await api.updateDish(newDishName, newDishCategory, id);
+            const resultado = await api.updateDish(newDishName, newDishCategory, newIsVegan, newHasLactose, newHasGluten, id);
 
             if (!resultado.error) {
                 setEditModal(false);
@@ -112,7 +118,7 @@ const DishItem = ({ dish, categoryList, refresh }) => {
     
     return (
         <View>
-        <TouchableHighlight style={styles.category} onPress={() => options(dish.nome, dish.id, dish.categoria.nome, dish.categoria.id)} underlayColor="#ededed">
+        <TouchableHighlight style={styles.category} onPress={() => options(dish.nome, dish.id, dish.categoria.nome, dish.categoria.id, dish.vegano, dish.lactose, dish.gluten)} underlayColor="#ededed">
             <View style={{flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', flex: 1, gap: 12}}>
             <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 4 }}>
                 {dish.gluten && <Badge caracteristica={'Glúten'} cor={'gluten'} />}
@@ -234,6 +240,45 @@ const DishItem = ({ dish, categoryList, refresh }) => {
                             categoryName={modalDish.categoryName}
                             buttonSpace={200}
                         />
+
+                        <View style={styles.switchRow}>
+                            <View style={styles.switchItem}>
+                                <MaterialCommunityIcons name="leaf" size={22} color="#4CAF50" />
+                                <Text style={styles.switchLabel}>Vegano</Text>
+                            </View>
+                            <Switch
+                                value={newIsVegan}
+                                onValueChange={setNewIsVegan}
+                                trackColor={{ false: '#CCCCCC', true: '#A5D6A7' }}
+                                thumbColor={newIsVegan ? '#4CAF50' : '#F4F3F4'}
+                            />
+                        </View>
+
+                        <View style={styles.switchRow}>
+                            <View style={styles.switchItem}>
+                                <MaterialCommunityIcons name="cup" size={22} color="#2196F3" />
+                                <Text style={styles.switchLabel}>Contém Lactose</Text>
+                            </View>
+                            <Switch
+                                value={newHasLactose}
+                                onValueChange={setNewHasLactose}
+                                trackColor={{ false: '#CCCCCC', true: '#90CAF9' }}
+                                thumbColor={newHasLactose ? '#2196F3' : '#F4F3F4'}
+                            />
+                        </View>
+
+                        <View style={styles.switchRow}>
+                            <View style={styles.switchItem}>
+                                <MaterialCommunityIcons name="barley" size={22} color="#FF9800" />
+                                <Text style={styles.switchLabel}>Contém Glúten</Text>
+                            </View>
+                            <Switch
+                                value={newHasGluten}
+                                onValueChange={setNewHasGluten}
+                                trackColor={{ false: '#CCCCCC', true: '#FFCC80' }}
+                                thumbColor={newHasGluten ? '#FF9800' : '#F4F3F4'}
+                            />
+                        </View>
                     </View>
                     <View style={styles.actions}>
                         <TouchableOpacity style={styles.editActionItem} onPress={() => updateDish(modalDish.id)}>
@@ -248,7 +293,7 @@ const DishItem = ({ dish, categoryList, refresh }) => {
         {modaltypes.map((item, index) => (
             <Modal key={index} animationType="slide" transparent={true} statusBarTranslucent={true} visible={item.show}>
                 <View style={styles.modalContainer}>
-                    <Text style={styles.modalTitleText}>{item.title}!</Text>
+                    <Text style={styles.modalTitle}>{item.title}!</Text>
                     <View style={[styles.circleOpacity, { backgroundColor: getModalColors(item.type).bgOpacity }]}>
                         <View style={[styles.circle, { backgroundColor: getModalColors(item.type).bg }]}>
                             <MaterialCommunityIcons name={item.iconName} size={60} color={item.type === 'warning' ? "#333333" : "#FFFFFF"} />

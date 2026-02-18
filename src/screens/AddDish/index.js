@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Modal, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../service/api';
 import styles, { getModalColors } from './style';
@@ -54,6 +54,9 @@ export default function AddDish() {
 
     const [dishName, setDishName] = useState('');
     const [dishCategory, setDishCategory] = useState('');
+    const [isVegan, setIsVegan] = useState(false);
+    const [hasLactose, setHasLactose] = useState(false);
+    const [hasGluten, setHasGluten] = useState(false);
 
     const addDish = async () => {
         if (dishName === '') {
@@ -65,12 +68,15 @@ export default function AddDish() {
             setShowWarningModal(true);
         }
         else {
-            const request = await api.insertDish(dishName, dishCategory);
+            const request = await api.insertDish(dishName, dishCategory, isVegan, hasLactose, hasGluten);
 
             if (!request.error) {
                 setShowSuccessModal(true);
                 setDishName('');
                 setDishCategory('');
+                setIsVegan(false);
+                setHasLactose(false);
+                setHasGluten(false);
             }
             else {
                 setWarningMessage(request.error);
@@ -100,6 +106,45 @@ export default function AddDish() {
                 text="Escolha uma opção..."
                 buttonSpace={100}
             />
+
+            <View style={styles.switchRow}>
+                <View style={styles.switchItem}>
+                    <MaterialCommunityIcons name="leaf" size={22} color="#4CAF50" />
+                    <Text style={styles.switchLabel}>Vegano</Text>
+                </View>
+                <Switch
+                    value={isVegan}
+                    onValueChange={setIsVegan}
+                    trackColor={{ false: '#CCCCCC', true: '#A5D6A7' }}
+                    thumbColor={isVegan ? '#4CAF50' : '#F4F3F4'}
+                />
+            </View>
+
+            <View style={styles.switchRow}>
+                <View style={styles.switchItem}>
+                    <MaterialCommunityIcons name="cup" size={22} color="#2196F3" />
+                    <Text style={styles.switchLabel}>Contém Lactose</Text>
+                </View>
+                <Switch
+                    value={hasLactose}
+                    onValueChange={setHasLactose}
+                    trackColor={{ false: '#CCCCCC', true: '#90CAF9' }}
+                    thumbColor={hasLactose ? '#2196F3' : '#F4F3F4'}
+                />
+            </View>
+
+            <View style={styles.switchRow}>
+                <View style={styles.switchItem}>
+                    <MaterialCommunityIcons name="barley" size={22} color="#FF9800" />
+                    <Text style={styles.switchLabel}>Contém Glúten</Text>
+                </View>
+                <Switch
+                    value={hasGluten}
+                    onValueChange={setHasGluten}
+                    trackColor={{ false: '#CCCCCC', true: '#FFCC80' }}
+                    thumbColor={hasGluten ? '#FF9800' : '#F4F3F4'}
+                />
+            </View>
 
             <TouchableOpacity style={styles.saveButton} onPress={addDish}>
                 <Text style={styles.saveButtonText}>Adicionar Prato</Text>

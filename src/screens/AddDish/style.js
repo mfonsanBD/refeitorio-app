@@ -44,6 +44,28 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         fontFamily: 'PoppinsRegular',
     },
+    switchRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        marginTop: 12,
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+    },
+    switchItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    switchLabel: {
+        fontSize: 16,
+        color: '#333333',
+        fontFamily: 'PoppinsMedium',
+    },
     saveButton: {
         backgroundColor: '#FF9900',
         justifyContent: 'center',

@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 18,
         fontFamily: 'PoppinsMedium',
-        color: '#AAAAAA',
+        color: '#495057',
         lineHeight: 20,
     },
     dishCategoryName: {
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     // Modal actions
     modalActionContainer: {
         flex: 1,
+        backgroundColor:'red',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
         borderTopColor: '#FF9900',
         backgroundColor: '#FFFFFF',
         paddingVertical: 20,
-        paddingHorizontal: 50,
+        paddingHorizontal: 20,
         alignItems: 'center',
     },
     modalHeader: {
@@ -135,6 +136,28 @@ const styles = StyleSheet.create({
     inputArea: {
         width: '100%',
     },
+    switchRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        marginTop: 12,
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+    },
+    switchItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    switchLabel: {
+        fontSize: 16,
+        color: '#333333',
+        fontFamily: 'PoppinsMedium',
+    },
     label: {
         fontSize: 16,
         color: '#495057',
@@ -197,7 +220,9 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontFamily: 'PoppinsBold',
         fontSize: 28,
+        lineHeight: 28,
         color: '#495057',
+        marginBottom: 20,
     },
     circleOpacity: {
         width: 135,
