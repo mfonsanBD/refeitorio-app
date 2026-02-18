@@ -4,6 +4,7 @@ import { Modal, Text, TextInput, TouchableHighlight, TouchableOpacity, View } fr
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SelectCategoryButton from "../SelectCategoryButton";
 import api from "../../service/api";
+import Badge from "../Badge";
 
 const DishItem = ({ dish, categoryList, refresh }) => {
     const [modalDish, setModalDish] = useState({});
@@ -108,182 +109,189 @@ const DishItem = ({ dish, categoryList, refresh }) => {
             setShowWarningModal(true);
         }
     };
-  return (
-    <View>
-      <TouchableHighlight style={styles.category} onPress={() => options(dish.nome, dish.id, dish.categoria.nome, dish.categoria.id)} underlayColor="#ededed">
-        <View style={{flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', flex: 1, gap: 12}}>
-          <View style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <Text style={styles.categoryName}>{dish.nome}</Text>
-            <Text style={styles.dishCategoryName}>Categoria: {dish.categoria.nome}</Text>
-          </View>
-
-          <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', alignContent: 'space-between'}}>
-            <TouchableOpacity style={styles.toogleDishStatus} onPress={() => toggleDishStatus(dish.id, dish.status)}>
-                <View style={[styles.checkbox, { backgroundColor: dish.status ? '#FF9900' : '#FFFFFF', borderColor: dish.status ? '#FF9900' : '#C4C4C4' }]}>
-                    {dish.status && <MaterialCommunityIcons name="check" size={18} color="#FFFFFF" />}
-                </View>
-                <Text style={styles.toogleDishStatusText}>{dish.status ? "Ativo" : "Inativo"}</Text>
-            </TouchableOpacity>
-
-            <View style={styles.dishButton}>
-                <MaterialCommunityIcons name="square-edit-outline" size={24} color="#333333" />
+    
+    return (
+        <View>
+        <TouchableHighlight style={styles.category} onPress={() => options(dish.nome, dish.id, dish.categoria.nome, dish.categoria.id)} underlayColor="#ededed">
+            <View style={{flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', flex: 1, gap: 12}}>
+            <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 4 }}>
+                {dish.gluten && <Badge caracteristica={'Glúten'} cor={'gluten'} />}
+                {dish.vegano && <Badge caracteristica={'Vegano'} cor={'vegano'} />}
+                {dish.lactose && <Badge caracteristica={'Lactose'} cor={'lactose'} />}
             </View>
-          </View>
+            
+            <View style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <Text style={styles.categoryName}>{dish.nome}</Text>
+                <Text style={styles.dishCategoryName}>Categoria: {dish.categoria.nome}</Text>
+            </View>
+
+            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', alignContent: 'space-between'}}>
+                <TouchableOpacity style={styles.toogleDishStatus} onPress={() => toggleDishStatus(dish.id, dish.status)}>
+                    <View style={[styles.checkbox, { backgroundColor: dish.status ? '#FF9900' : '#FFFFFF', borderColor: dish.status ? '#FF9900' : '#C4C4C4' }]}>
+                        {dish.status && <MaterialCommunityIcons name="check" size={18} color="#FFFFFF" />}
+                    </View>
+                    <Text style={styles.toogleDishStatusText}>{dish.status ? "Ativo" : "Inativo"}</Text>
+                </TouchableOpacity>
+
+                <View style={styles.dishButton}>
+                    <MaterialCommunityIcons name="square-edit-outline" size={24} color="#333333" />
+                </View>
+            </View>
+            </View>
+        </TouchableHighlight>
+
+        {/* Options Modal */}
+        <Modal
+            animationType="slide"
+            transparent={true}
+            statusBarTranslucent={true}
+            visible={optionsModal}
+            onRequestClose={() => setOptionsModal(false)}
+        >
+            <View style={styles.modalActionContainer}>
+                <View style={styles.modalHeader}>
+                    <TouchableOpacity style={styles.close} onPress={() => setOptionsModal(false)}>
+                        <MaterialCommunityIcons name="close" size={24} color="#FFFFFF" />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>O que deseja fazer com o prato: <Text style={styles.modalTitleCategoryName}>{modalDish.name}</Text>?
+                    </Text>
+                    <View style={styles.actions}>
+                        <TouchableOpacity style={styles.actionsItemEdit} onPress={() => actionEditModal()}>
+                            <MaterialCommunityIcons name="square-edit-outline" size={24} color="#AAAAAA" />
+                            <Text style={styles.actionTitleEdit}>Editar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.actionsItemDelete} onPress={() => actionDeleteModal()}>
+                            <MaterialCommunityIcons name="trash-can-outline" size={24} color="#FFFFFF" />
+                            <Text style={styles.actionTitleDelete}>Excluir</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+
+        {/* Delete Modal */}
+        <Modal
+            animationType="slide"
+            transparent={true}
+            statusBarTranslucent={true}
+            visible={deleteModal}
+            onRequestClose={() => setDeleteModal(false)}
+        >
+            <View style={styles.modalActionContainer}>
+                <View style={styles.modalHeader}>
+                    <TouchableOpacity style={styles.close} onPress={() => setDeleteModal(false)}>
+                        <MaterialCommunityIcons name="close" size={24} color="#FFFFFF" />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Tem certeza que deseja excluir o prato: <Text style={styles.modalTitleCategoryName}>{modalDish.name}</Text>?
+                    </Text>
+                    <View style={styles.actions}>
+                        <TouchableOpacity style={styles.deleteActionItemEdit} onPress={() => setDeleteModal(false)}>
+                            <Text style={styles.actionTitleEdit}>Não, Cancelar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.deleteActionItemDelete} onPress={() => deleteDish(modalDish.id)}>
+                            <Text style={styles.actionTitleDelete}>Sim, Excluir</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+
+        {/* Edit Modal */}
+        <Modal
+            animationType="slide"
+            transparent={true}
+            statusBarTranslucent={true}
+            visible={editModal}
+            onRequestClose={() => setEditModal(false)}
+        >
+            <View style={styles.modalActionContainer}>
+                <View style={styles.modalHeader}>
+                    <TouchableOpacity style={styles.close} onPress={() => setEditModal(false)}>
+                        <MaterialCommunityIcons name="close" size={24} color="#FFFFFF" />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Editando o prato: <Text style={styles.modalTitleCategoryName}>{modalDish.name}</Text>.
+                    </Text>
+                    <View style={styles.inputArea}>
+                        <Text style={styles.label}>Nome do Prato</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder={modalDish.name}
+                            placeholderTextColor="#C4C4C4"
+                            value={newDishName}
+                            onChangeText={t => setNewDishName(t)}
+                        />
+                        <Text style={styles.label}>Categoria</Text>
+                        <SelectCategoryButton
+                            opcoes={categoryList}
+                            onChangeSelect={(id) => setNewDishCategory(id)}
+                            text="Categoria"
+                            categoryName={modalDish.categoryName}
+                            buttonSpace={200}
+                        />
+                    </View>
+                    <View style={styles.actions}>
+                        <TouchableOpacity style={styles.editActionItem} onPress={() => updateDish(modalDish.id)}>
+                            <Text style={styles.actionTitleDelete}>Salvar Alterações</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+
+        {/* Result Modals */}
+        {modaltypes.map((item, index) => (
+            <Modal key={index} animationType="slide" transparent={true} statusBarTranslucent={true} visible={item.show}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitleText}>{item.title}!</Text>
+                    <View style={[styles.circleOpacity, { backgroundColor: getModalColors(item.type).bgOpacity }]}>
+                        <View style={[styles.circle, { backgroundColor: getModalColors(item.type).bg }]}>
+                            <MaterialCommunityIcons name={item.iconName} size={60} color={item.type === 'warning' ? "#333333" : "#FFFFFF"} />
+                        </View>
+                    </View>
+
+                    <Text style={[styles.message, { width: item.type === 'success' ? '70%' : '100%' }]}>{item.message}</Text>
+
+                    {item.type === 'success' &&
+                        <TouchableOpacity
+                            style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
+                            onPress={() => [refresh(), setShowSuccessModal(false)]}
+                        >
+                            <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
+                                Voltar para a Lista
+                            </Text>
+                        </TouchableOpacity>
+                    }
+                    {item.type === 'warning' &&
+                        <TouchableOpacity
+                            style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
+                            onPress={() => setShowWarningModal(false)}
+                        >
+                            <Text style={[styles.backToHomeText, { color: '#333333' }]}>
+                                Corrigir
+                            </Text>
+                        </TouchableOpacity>
+                    }
+                    {item.type === 'danger' &&
+                        <TouchableOpacity
+                            style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
+                            onPress={() => navigation.navigate('Home')}
+                        >
+                            <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
+                                Voltar para a Tela Inicial
+                            </Text>
+                        </TouchableOpacity>
+                    }
+                </View>
+            </Modal>
+        ))}
         </View>
-      </TouchableHighlight>
-
-    {/* Options Modal */}
-      <Modal
-          animationType="slide"
-          transparent={true}
-          statusBarTranslucent={true}
-          visible={optionsModal}
-          onRequestClose={() => setOptionsModal(false)}
-      >
-          <View style={styles.modalActionContainer}>
-              <View style={styles.modalHeader}>
-                  <TouchableOpacity style={styles.close} onPress={() => setOptionsModal(false)}>
-                      <MaterialCommunityIcons name="close" size={24} color="#FFFFFF" />
-                  </TouchableOpacity>
-              </View>
-              <View style={styles.modalContent}>
-                  <Text style={styles.modalTitle}>O que deseja fazer com o prato: <Text style={styles.modalTitleCategoryName}>{modalDish.name}</Text>?
-                  </Text>
-                  <View style={styles.actions}>
-                      <TouchableOpacity style={styles.actionsItemEdit} onPress={() => actionEditModal()}>
-                          <MaterialCommunityIcons name="square-edit-outline" size={24} color="#AAAAAA" />
-                          <Text style={styles.actionTitleEdit}>Editar</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.actionsItemDelete} onPress={() => actionDeleteModal()}>
-                          <MaterialCommunityIcons name="trash-can-outline" size={24} color="#FFFFFF" />
-                          <Text style={styles.actionTitleDelete}>Excluir</Text>
-                      </TouchableOpacity>
-                  </View>
-              </View>
-          </View>
-      </Modal>
-
-      {/* Delete Modal */}
-      <Modal
-          animationType="slide"
-          transparent={true}
-          statusBarTranslucent={true}
-          visible={deleteModal}
-          onRequestClose={() => setDeleteModal(false)}
-      >
-          <View style={styles.modalActionContainer}>
-              <View style={styles.modalHeader}>
-                  <TouchableOpacity style={styles.close} onPress={() => setDeleteModal(false)}>
-                      <MaterialCommunityIcons name="close" size={24} color="#FFFFFF" />
-                  </TouchableOpacity>
-              </View>
-              <View style={styles.modalContent}>
-                  <Text style={styles.modalTitle}>Tem certeza que deseja excluir o prato: <Text style={styles.modalTitleCategoryName}>{modalDish.name}</Text>?
-                  </Text>
-                  <View style={styles.actions}>
-                      <TouchableOpacity style={styles.deleteActionItemEdit} onPress={() => setDeleteModal(false)}>
-                          <Text style={styles.actionTitleEdit}>Não, Cancelar</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.deleteActionItemDelete} onPress={() => deleteDish(modalDish.id)}>
-                          <Text style={styles.actionTitleDelete}>Sim, Excluir</Text>
-                      </TouchableOpacity>
-                  </View>
-              </View>
-          </View>
-      </Modal>
-
-      {/* Edit Modal */}
-      <Modal
-          animationType="slide"
-          transparent={true}
-          statusBarTranslucent={true}
-          visible={editModal}
-          onRequestClose={() => setEditModal(false)}
-      >
-          <View style={styles.modalActionContainer}>
-              <View style={styles.modalHeader}>
-                  <TouchableOpacity style={styles.close} onPress={() => setEditModal(false)}>
-                      <MaterialCommunityIcons name="close" size={24} color="#FFFFFF" />
-                  </TouchableOpacity>
-              </View>
-              <View style={styles.modalContent}>
-                  <Text style={styles.modalTitle}>Editando o prato: <Text style={styles.modalTitleCategoryName}>{modalDish.name}</Text>.
-                  </Text>
-                  <View style={styles.inputArea}>
-                      <Text style={styles.label}>Nome do Prato</Text>
-                      <TextInput
-                          style={styles.input}
-                          placeholder={modalDish.name}
-                          placeholderTextColor="#C4C4C4"
-                          value={newDishName}
-                          onChangeText={t => setNewDishName(t)}
-                      />
-                      <Text style={styles.label}>Categoria</Text>
-                      <SelectCategoryButton
-                          opcoes={categoryList}
-                          onChangeSelect={(id) => setNewDishCategory(id)}
-                          text="Categoria"
-                          categoryName={modalDish.categoryName}
-                          buttonSpace={200}
-                      />
-                  </View>
-                  <View style={styles.actions}>
-                      <TouchableOpacity style={styles.editActionItem} onPress={() => updateDish(modalDish.id)}>
-                          <Text style={styles.actionTitleDelete}>Salvar Alterações</Text>
-                      </TouchableOpacity>
-                  </View>
-              </View>
-          </View>
-      </Modal>
-
-      {/* Result Modals */}
-      {modaltypes.map((item, index) => (
-          <Modal key={index} animationType="slide" transparent={true} statusBarTranslucent={true} visible={item.show}>
-              <View style={styles.modalContainer}>
-                  <Text style={styles.modalTitleText}>{item.title}!</Text>
-                  <View style={[styles.circleOpacity, { backgroundColor: getModalColors(item.type).bgOpacity }]}>
-                      <View style={[styles.circle, { backgroundColor: getModalColors(item.type).bg }]}>
-                          <MaterialCommunityIcons name={item.iconName} size={60} color={item.type === 'warning' ? "#333333" : "#FFFFFF"} />
-                      </View>
-                  </View>
-
-                  <Text style={[styles.message, { width: item.type === 'success' ? '70%' : '100%' }]}>{item.message}</Text>
-
-                  {item.type === 'success' &&
-                      <TouchableOpacity
-                          style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
-                          onPress={() => [refresh(), setShowSuccessModal(false)]}
-                      >
-                          <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
-                              Voltar para a Lista
-                          </Text>
-                      </TouchableOpacity>
-                  }
-                  {item.type === 'warning' &&
-                      <TouchableOpacity
-                          style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
-                          onPress={() => setShowWarningModal(false)}
-                      >
-                          <Text style={[styles.backToHomeText, { color: '#333333' }]}>
-                              Corrigir
-                          </Text>
-                      </TouchableOpacity>
-                  }
-                  {item.type === 'danger' &&
-                      <TouchableOpacity
-                          style={[styles.backToHome, { backgroundColor: getModalColors(item.type).bg }]}
-                          onPress={() => navigation.navigate('Home')}
-                      >
-                          <Text style={[styles.backToHomeText, { color: '#FFFFFF' }]}>
-                              Voltar para a Tela Inicial
-                          </Text>
-                      </TouchableOpacity>
-                  }
-              </View>
-          </Modal>
-      ))}
-    </View>
-  )
+    )
 }
 
 export default DishItem;
